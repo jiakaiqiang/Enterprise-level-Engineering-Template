@@ -1,4 +1,3 @@
-import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'url'
@@ -20,7 +19,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 export default defineConfig({
   plugins: [
     vue(),
-    qiankun('frondSystem', { // 这里的名称需与基座注册的 name 一致
+    qiankun('sub-frondSystem', { // 这里的名称需与基座注册的 name 一致
       useDevMode: true
     }),
     vueJsx(),
@@ -44,10 +43,7 @@ export default defineConfig({
    // supportTs: false, // 打开后，可以读取 ts 文件模块。 请注意，打开后将无法监视.ts 文件更改
       mockPath: '@/mock', // 设置 mock 文件夹路径
     }),
-    sentryVitePlugin({
-      org: "bf24f2a860d4",
-      project: "jiakaiqiang-sentry"
-    }),
+    
     transformLanage()
   ],
 
