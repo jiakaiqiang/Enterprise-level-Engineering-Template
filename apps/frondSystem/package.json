@@ -29,7 +29,6 @@
     "unplugin-vue-setup-extend-plus": "^1.0.1",
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-mock": "^3.0.2",
-    "vite-plugin-qiankun": "^1.0.15",
     "vite-plugin-style-import": "^2.0.0",
     "vue": "^3.4.21",
     "vue-i18n": "^9.14.5",

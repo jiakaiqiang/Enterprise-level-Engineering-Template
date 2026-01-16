@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import '@/common/style/global.scss'
-import { renderWithQiankun, qiankunWindow } from 'vite-plugin-qiankun/dist/helper';
+
 import App from './App.vue'
 import ElementPlus from "element-plus";
 import install from './install/index'
@@ -18,7 +18,7 @@ import '@/styles/iconfont.css';
 // element dark css
 import "element-plus/theme-chalk/dark/css-vars.css";
 import './styles/variables.scss';
-import 'virtual:svg-icons-register' //注册svg图标模块
+// import 'virtual:svg-icons-register' //暂时注释，先让应用启动
 import '@/common/style/dark.scss';
 
 import '@/common/style/light.scss';
@@ -33,8 +33,8 @@ const getElementLocale = () => {
 };
 
 
-function render(props: any = {}) {
-  const { container } = props;
+function render() {
+ 
   instance = createApp(App);
   // 初始化 Sentry 与 Vue 实例的连接
   if (instance && !Sentry.getCurrentScope().getClient()) {
@@ -52,28 +52,6 @@ function render(props: any = {}) {
   }); 
   instance.use(i18n)
   // 如果是在 qiankun 环境下，挂载到容器内；否则挂载到 #app
-  instance.mount(container ? container.querySelector('#app') : '#app');
+  instance.mount('#app');
 }
-renderWithQiankun({
-  mount(props) {
-    console.log('mount', props);
-    render(props);
-  },
-  bootstrap() {
-    console.log('bootstrap');
-  },
-  unmount(props) {
-    console.log('unmount', props);
-    instance.unmount();
-    instance._container.innerHTML = '';
-    instance = null;
-  },
-  update(props) {
-    console.log('update', props);
-  }
-});
-
-// 独立运行时直接渲染
-if (!qiankunWindow.__POWERED_BY_QIANKUN__) {
-  render();
-}
+render()

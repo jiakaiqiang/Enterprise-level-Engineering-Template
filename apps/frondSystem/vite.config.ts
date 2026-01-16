@@ -13,15 +13,13 @@ import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 import vueSetupExtend from "unplugin-vue-setup-extend-plus/vite";
 import {viteMockServe} from 'vite-plugin-mock'
 import transformLanage from './plugins/transformLanage'
-import qiankun from 'vite-plugin-qiankun';
+
 import vueJsx from '@vitejs/plugin-vue-jsx'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
-    qiankun('sub-frondSystem', { // 这里的名称需与基座注册的 name 一致
-      useDevMode: true
-    }),
+   
     vueJsx(),
     AutoImport({ imports: ['vue', 'vue-router','pinia'] ,dts:false}),
     Components({ resolvers:[ElementPlusResolver()]}),
