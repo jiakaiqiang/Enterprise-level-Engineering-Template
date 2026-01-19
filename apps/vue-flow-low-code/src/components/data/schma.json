@@ -50,6 +50,7 @@
     },
     "path-custom":{
         "name":"路径",
+        "type":"approval",
         "defaultProps":[
             {
                 "name":"路径名称",
@@ -75,6 +76,7 @@
     },
     "light-custom":{
         "name":"灯光",
+        "type":"approval",
         "defaultProps":[
             {
                 "name":"灯光名称",
@@ -100,6 +102,7 @@
     },
     "arm-custom":{
         "name":"机械臂",
+        "type":"approval",
         "defaultProps":[
             {
                 "name":"机械臂高度",
