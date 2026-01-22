@@ -55,3 +55,17 @@ export const componentData: ComponentData[] = [
         },
     }
 ]
+
+
+export const optionButtonList =[{
+    name:"保存",
+    size:"small",
+    type:"primary",
+    event:"save",
+
+},{
+    name:"回退",
+    size:"small",
+    type:"primary",
+    event:"back",
+}]

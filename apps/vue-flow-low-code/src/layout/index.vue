@@ -17,10 +17,7 @@
       <router-view />
     </main>
 
-    <!-- 底部（固定） -->
-    <footer class="layout-footer">
-      © 2025 My Company
-    </footer>
+    
   </div>
 </template>
 
@@ -32,7 +29,7 @@
 .layout-wrapper {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+
 }
 .layout-header,
 .layout-footer {

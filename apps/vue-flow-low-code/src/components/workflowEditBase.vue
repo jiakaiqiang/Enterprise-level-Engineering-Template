@@ -23,6 +23,7 @@
     </aside>
 
     <div class="main-canvas" style="flex-grow: 1;">
+      <optionButtonList @handleClick="handleOptionClick" />
       <VueFlow
         :nodes="elements"
         @dragover="onDragOver"
@@ -33,15 +34,17 @@
         @edge-click="onEdgeClick"
         @connect="onConnect"
         @edge-connect="onEdgeConnect"
+        :connection-mode="ConnectionMode.Strict"
       >
+      <!-- :connection-mode="ConnectionMode.Strict" 设置成严格模式，只能从输出连接点连接到输入连接点 -->
         <!-- 注册自定义节点 -->
         <template #node-custom-input="nodeProps">
           <CustomNode
             v-bind="nodeProps"
             :show-top-handle="false"
             :show-left-handle="false"
-            :show-right-handle="false"
-            :show-bottom-handle="true"
+            :show-right-handle="true"
+            :show-bottom-handle="false"
           />
         </template>
         
@@ -56,32 +59,25 @@
           />
         </template>
         
-        <template #node-custom-condition="nodeProps">
-          <CustomNode
-            v-bind="nodeProps"
-            :show-top-handle="true"
-            :show-left-handle="true"
-            :show-right-handle="true"
-            :show-bottom-handle="true"
-          />
-        </template>
+       
         
         <template #node-custom-output="nodeProps">
           <CustomNode
             v-bind="nodeProps"
-            :show-top-handle="true"
-            :show-left-handle="false"
+            :show-top-handle="false"
+            :show-left-handle="true"
             :show-right-handle="false"
             :show-bottom-handle="false"
           />
         </template>
         
         <Background />
-        <Controls />
+      
       </VueFlow>
     </div>
     <!-- 添加右侧抽屉 -->
     <paramComponent
+     v-if=paramDrawerVisible
       ref="paramDrawer"
       :visible="paramDrawerVisible"
       :current-comp="currentComp"
@@ -92,8 +88,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { VueFlow, useVueFlow, Node, Edge, Connection } from '@vue-flow/core'
+import { VueFlow, useVueFlow, Node, Edge, Connection,ConnectionMode } from '@vue-flow/core'
+//ConnectionMode 设置成
 import { Background } from '@vue-flow/background'
+import optionButtonList from './optionButtonList.vue'
 import { Controls } from '@vue-flow/controls'
 import CustomNode from './CustomNode.vue'
 import {componentData} from './data/componentData.ts'
@@ -120,11 +118,28 @@ const elements = ref<Node[]>([
     }
   }
 ])
-
+const handleOptionClick = (event: string) => {
+    if(event=='save'){
+      console.log('保存')
+      // 保存流程
+      const workflow = {
+        nodes: elements.value,
+        edges: edges.value
+      }
+      console.log(workflow,'workflow')
+    }
+    if(event=='back'){
+      console.log('回退')
+    }
+}
 // 处理节点点击事件
-const onNodeClick = (node) => {
+const onNodeClick = (node:any) => {
+    
+     if(node.node.data.type=='custom-input'){
+      return 
+     }
    // 点击的时候显示对应匹配的属性值 
-   console.log(node,'node')
+
    paramDrawerVisible.value = true
    currentComp.value = node
 }

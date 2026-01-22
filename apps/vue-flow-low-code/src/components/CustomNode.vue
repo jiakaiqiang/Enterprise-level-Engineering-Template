@@ -21,8 +21,12 @@
     <div class="node-content">
      
       <div class="node-header">{{ data.title || data.label || data.name}}</div>
-     
       <div class="node-type">{{ data.nodeType }}</div>
+      
+      <div class="node-content-delete" @click.stop="handleDeleteClick(id)" v-if="type!='custom-input'">
+        删除
+      </div>
+
     </div>
     
     <!-- 右侧输出连接点 -->
@@ -61,10 +65,15 @@ const props = withDefaults(defineProps<NodeProps & {
   showRightHandle: true,
   showBottomHandle: true
 })
-console.log(props,'propspropsprops')
+const handleDeleteClick = ()=>{
+ 
+  if(props.type==='custom-input'){
+    return
+  }
+}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .custom-node {
  
   border-radius: 8px;
@@ -81,6 +90,18 @@ console.log(props,'propspropsprops')
 .node-content {
   text-align: center;
   width: 100%;
+  position:relative;
+  .node-content-delete{
+    position:absolute;
+    top:0;
+    right:0;
+    font-size: 6px;
+    color: #999;
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+  }
 }
 
 .node-header {

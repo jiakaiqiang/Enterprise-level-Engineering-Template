@@ -10,7 +10,7 @@
         <div class="attr-dialog" :style="dialogStyle">
           <!-- 头部 -->
           <div class="attr-dialog-header">
-            <span class="title">组件属性</span>
+            <span class="title">{{currentComp?.node?.data?.title || '组件属性'}}</span>
             <button class="close-btn" @click="close">×</button>
           </div>
 
@@ -21,15 +21,19 @@
 
             <!-- 属性表单 -->
             <div v-else class="attr-form">
-              <div class="form-item" v-for="(item, key) in compAttrs" :key="key">
-                <label class="form-label">{{ item.label }}</label>
+             <el-form :model="localAttrs" :rules="rules" ref="formRef">
+              <el-form-item class="form-item" v-for="(item, index) in compAttrs" :key="index"  :label="item.label">
+                <!-- 确保组件存在才渲染 -->
                 <component
-                  :is="item.editor"
-                  v-model="item.value"
+               
+                  :is="item.component"
+                  v-model="localAttrs[item.modelValue]"
                   class="form-editor"
                   v-bind="item.editorProps"
                 />
-              </div>
+              
+              </el-form-item>
+              </el-form>
             </div>
           </div>
 
@@ -46,41 +50,49 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue'
+import {getFormItemData} from '@/hooks/getFormData'
 
+const  rules =  ref({})
+const componentsList= getFormItemData()
+console.log(componentsList.value,'components')
 /* props */
 const props = defineProps({
   visible: { type: Boolean, default: false },
   currentComp: { type: Object, default: null } // 低代码当前组件元信息
 })
-
+console.log(props.currentComp,'props.currentComp')
 /* emits */
-const emit = defineEmits(['update:visible', 'save'])
+const emit = defineEmits(['handleclose', 'save'])
 
 /* 响应式：拷贝一份属性，避免直接修改元对象 */
 const localAttrs = ref({})
 
-/* 计算属性：将元信息转为可渲染结构 */
+/* 处理组件显示效果：返回响应式计算属性，确保数据变化后视图自动更新 */
 const compAttrs = computed(() => {
-  if (!props.currentComp || !props.currentComp.props) return {}
-  const result = {}
-  Object.keys(props.currentComp.props).forEach(key => {
-    const meta = props.currentComp.props[key]
-    result[key] = {
-      label: meta.label || key,
-      value: localAttrs.value[key] ?? meta.default,
-      editor: meta.editor || 'el-input', // 默认使用 el-input，可按需替换
-      editorProps: meta.editorProps || {}
+  if (!props.currentComp || !props.currentComp.node?.data?.defaultProps) return []
+  // 同步本地属性副本
+  localAttrs.value = props.currentComp.node.data.defaultData || {}
+  const formDataItemField = props.currentComp.node.data.defaultProps
+  console.log(formDataItemField, 'formDataItemField', componentsList.value.get('input'))
+  return formDataItemField.map(item => ({
+    label: item.name,
+    modelValue: item.modelValue, // 这是表单字段的键名
+    component: componentsList.value.get(item.type),
+    editorProps: {
+  
+      ...(item.options ? { options: item.options } : {})
     }
-  })
-  return result
+  }))
 })
 
+
+console.log(compAttrs.value,'compAttrs.value')
 /* 监听：每次打开弹窗时同步最新属性 */
 watch(
   () => props.visible,
   val => {
     if (val && props.currentComp) {
-      localAttrs.value = { ...props.currentComp.attrs }
+      localAttrs.value = { ...props.currentComp.node.data.defaultData }
     }
   },
   { immediate: true }
@@ -119,11 +131,11 @@ const dialogStyle = {
 .attr-dialog-mask {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 1000;
   background: rgba(0, 0, 0, 0.45);
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  align-items: flex-end;
+  justify-content: flex-end;
 }
 
 /* 弹窗主体 */
@@ -134,7 +146,9 @@ const dialogStyle = {
   margin-top: var(--top, 10vh);
   display: flex;
   flex-direction: column;
-  max-height: 80vh;
+  width:350px !important;
+  height: 700px !important;
+  
   overflow: hidden;
 }
 
